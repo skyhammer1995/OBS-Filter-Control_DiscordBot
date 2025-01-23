@@ -1,5 +1,4 @@
 # ObsBot.py
-
 # OBS websocket docu: https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#setsourcefiltersettings
 import asyncio
 import os
@@ -8,15 +7,16 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from obswebsocket import obsws, requests
 
-
-
 # Read from locally maintained .env file
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
+RSPCHNL = os.getenv('DISCORD_RSPCHNL')
 OBS_HOST = os.getenv('OBS_HOST')
 OBS_PORT = os.getenv('OBS_PORT')
 OBS_PW = os.getenv('OBS_PW')
+
+ChannelResponseId = int(RSPCHNL) # D&D Galtea::camera-control
 
 # configure and init Discord Bot
 help_command = commands.DefaultHelpCommand(no_category = 'Commands')
@@ -58,97 +58,108 @@ async def obs_enable_filter(filter_name, delay=0.2):
 ####### Manual cam control commands #######
 @bot.command(name='pan+', help='\n -moves camera\'s pan in the positive direction a certain # of degrees; optional: number of iterations')
 async def view_pan_positive(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         for _ in range(iterations):
             await obs_enable_filter('Pan+')
-        await ctx.send(f"Panned+ {iterations} times")
+        await responseChannel.send(f"Panned+ {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 @bot.command(name='pan-', help='\n -moves camera\'s pan in the negative direction a certain # of degrees; optional: number of iterations')
-async def view_pan_negative(ctx, iterations = 1):
+async def view_pan_negative(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         for _ in range(iterations):
             await obs_enable_filter('Pan-')
-        await ctx.send(f"Panned- {iterations} times")
+        await responseChannel.send(f"Panned- {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 @bot.command(name='tilt+', help='\n -moves camera\'s tilt in the positive direction a certain # of degrees; optional: number of iterations')
-async def view_tilt_positive(ctx, iterations = 1):
+async def view_tilt_positive(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         for _ in range(iterations):
             await obs_enable_filter('Tilt+')
-        await ctx.send(f"Tilted+ {iterations} times")
+        await responseChannel.send(f"Tilted+ {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 @bot.command(name='tilt-', help='\n -moves camera\'s tilt in the negative direction a certain # of degrees; optional: number of iterations')
-async def view_tilt_negative(ctx, iterations = 1):
+async def view_tilt_negative(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:   
         for _ in range(iterations):
             await obs_enable_filter('Tilt-')
-        await ctx.send(f"Tilted- {iterations} times")
+        await responseChannel.send(f"Tilted- {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 @bot.command(name='zoom+', help='\n -moves camera\'s zoom in the positive direction a certain # of degrees; optional: number of iterations')
-async def view_zoom_positive(ctx, iterations = 1):
+async def view_zoom_positive(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         for _ in range(iterations):
             await obs_enable_filter('Zoom+')
-        await ctx.send(f"Zoomed+ {iterations} times")
+        await responseChannel.send(f"Zoomed+ {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 @bot.command(name='zoom-', help='\n -moves camera\'s zoom in the negative direction a certain # of degrees; optional: number of iterations')
-async def view_zoom_negative(ctx, iterations = 1):
+async def view_zoom_negative(ctx, iterations: int = 1):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         for _ in range(iterations):
             await obs_enable_filter('Zoom-')
-        await ctx.send(f"Zoomed- {iterations} times")
+        await responseChannel.send(f"Zoomed- {iterations} times")
     except Exception as e:
-        await ctx.send(f'Error: {e}')
+        await responseChannel.send(f'Error: {e}')
 
 ####### Preset view commands #######
 @bot.command(name='wholeTable', help='\n -moves camera to preset view of the entire table')
 async def view_table_whole(ctx):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                              filterName='Whole Table', 
                                              filterEnabled=True))
     response_message = 'Ok dawg, let\'s look at the whole table!'
-    await ctx.send(response_message)
+    await responseChannel.send(response_message)
 
 @bot.command(name='leftTable', help='\n -moves camera to preset view of the left side of the table')
 async def view_table_left(ctx):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                              filterName='Left Table', 
                                              filterEnabled=True))
     response_message = 'Ok dawg, let\'s look at the left side of the table!'
-    await ctx.send(response_message)
+    await responseChannel.send(response_message)
 
 @bot.command(name='rightTable', help='\n -moves camera to preset view of the right side of the table')
 async def view_table_right(ctx):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                              filterName='Right Table', 
                                              filterEnabled=True))
     response_message = 'Ok dawg, let\'s look at the right side of the table!'
-    await ctx.send(response_message)
+    await responseChannel.send(response_message)
 
 @bot.command(name='DM', help='\n -moves camera to preset view of the DM')
 async def view_table_dm(ctx):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                              filterName='DM', 
                                              filterEnabled=True))
     response_message = 'Ok dawg, let\'s look at the DM\'s mug!'
-    await ctx.send(response_message)
+    await responseChannel.send(response_message)
 
 @bot.command(name='battlemap', help='\n -moves camera to preset view of the battlemap area of the table')
 async def view_table_battlemap(ctx):
+    responseChannel = bot.get_channel(ChannelResponseId) 
     obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                              filterName='Battlemap', 
                                              filterEnabled=True))
     response_message = 'Ok dawg, let\'s look at the action!'
-    await ctx.send(response_message)
+    await responseChannel.send(response_message)
 
 bot.run(TOKEN)

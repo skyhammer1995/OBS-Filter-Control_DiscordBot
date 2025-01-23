@@ -44,7 +44,7 @@ async def view_table_whole(ctx):
     obs.disconnect()
 
 @bot.command(name='leftTable', help='\n -moves camera to preset view of the left side of the table')
-async def view_table_right(ctx):
+async def view_table_left(ctx):
     obs = await connect_to_obs()
     obs.call(requests.SetSourceFilterVisibility(source_name='Insta360 Link', 
                                                 filter_name='leftTable', 
@@ -53,7 +53,7 @@ async def view_table_right(ctx):
     await ctx.send(response_message)
     obs.disconnect()
 
-@bot.command(name='rightTable', help='\n -moves camera to preset view of right side of the table')
+@bot.command(name='rightTable', help='\n -moves camera to preset view of the right side of the table')
 async def view_table_right(ctx):
     obs = await connect_to_obs()
     obs.call(requests.SetSourceFilterVisibility(source_name='Insta360 Link', 

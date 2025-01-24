@@ -28,9 +28,7 @@ description = 'Using discord commands and my Insta360 Link camera so you can see
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-# bot = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='!', intents=intents, description=description, help_command=help_command)
-# tree = discord.app_commands.CommandTree(bot)
 
 # configure and connect OBS Websocket
 obs = obsws(OBS_HOST, OBS_PORT, OBS_PW, authreconnect=1)
@@ -124,7 +122,7 @@ async def zoom_camera_out(interaction: discord.Interaction, iterations: int = 1)
         await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
 ####### Preset view commands #######
-@bot.tree.command(name='show') #Show
+@bot.tree.command(name='show')
 @app_commands.describe(preset= 'Choose a preset view you\'d like')
 @app_commands.choices(preset=[
     app_commands.Choice(name='Whole Table', value=1),

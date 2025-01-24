@@ -62,49 +62,69 @@ async def obs_enable_filter(filter_name, delay=0.2):
                                              filterEnabled=False))
     await asyncio.sleep(delay)
 
-@bot.tree.command(name='ping')
-async def ping(interaction: discord.Interaction):
-    await interaction.response.send_message(f"pong")
-
 ####### Manual cam control commands #######
-@bot.tree.command(name='manual_camera_control')
-@app_commands.describe(cam_control='Different methods of manually controlling the camera')
-@app_commands.choices(cam_control=[
-    app_commands.Choice(name='up', value=1),
-    app_commands.Choice(name='down', value=2),
-    app_commands.Choice(name='left', value=3),
-    app_commands.Choice(name='right', value=4),
-    app_commands.Choice(name='in', value=5),
-    app_commands.Choice(name='out', value=6)
-])
+@bot.tree.command(name='turn_camera_left')
 @app_commands.describe(iterations='How many times do you want to enact your momvement?')
-async def manual_camera_control(interaction: discord.Interaction, cam_control:app_commands.Choice[int], iterations: int = 1):
-    obsFilterName: str
+async def turn_camera_left(interaction: discord.Interaction, iterations: int = 1):
     try:
-        match cam_control.value:
-            case 1:
-                obsFilterName = 'Tilt+'
-            case 2:
-                obsFilterName = 'Tilt-'
-            case 3:
-                obsFilterName = 'Pan-'
-            case 4:
-                obsFilterName = 'Pan+'
-            case 5:
-                obsFilterName = 'Zoom+'
-            case 6:
-                obsFilterName = 'Zoom-'
-            case _:
-                print('Default Case')
-                raise Exception("cam_control must be one of the choices provided")
         for _ in range(iterations):
-            await obs_enable_filter(obsFilterName)
-        await interaction.response.send_message(f"Applied {obsFilterName} {iterations} times", ephemeral=True)
+            await obs_enable_filter('Pan-')
+        await interaction.response.send_message(f"Turned left {iterations} times", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
+
+@bot.tree.command(name='turn_camera_right')
+@app_commands.describe(iterations='How many times do you want to enact your momvement?')
+async def turn_camera_right(interaction: discord.Interaction, iterations: int = 1):
+    try:
+        for _ in range(iterations):
+            await obs_enable_filter('Pan+')
+        await interaction.response.send_message(f"Turned right {iterations} times", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
+
+@bot.tree.command(name='turn_camera_up')
+@app_commands.describe(iterations='How many times do you want to enact your momvement?')
+async def turn_camera_up(interaction: discord.Interaction, iterations: int = 1):
+    try:
+        for _ in range(iterations):
+            await obs_enable_filter('Tilt+')
+        await interaction.response.send_message(f"Turned up {iterations} times", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
+
+@bot.tree.command(name='turn_camera_down')
+@app_commands.describe(iterations='How many times do you want to enact your momvement?')
+async def turn_camera_down(interaction: discord.Interaction, iterations: int = 1):
+    try:
+        for _ in range(iterations):
+            await obs_enable_filter('Tilt-')
+        await interaction.response.send_message(f"Turned down {iterations} times", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
+
+@bot.tree.command(name='zoom_camera_in')
+@app_commands.describe(iterations='How many times do you want to enact your momvement?')
+async def zoom_camera_in(interaction: discord.Interaction, iterations: int = 1):
+    try:
+        for _ in range(iterations):
+            await obs_enable_filter('Zoom-')
+        await interaction.response.send_message(f"Turned up {iterations} times", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
+
+@bot.tree.command(name='zoom_camera_out')
+@app_commands.describe(iterations='How many times do you want to enact your momvement?')
+async def zoom_camera_out(interaction: discord.Interaction, iterations: int = 1):
+    try:
+        for _ in range(iterations):
+            await obs_enable_filter('Zoom+')
+        await interaction.response.send_message(f"Turned up {iterations} times", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
 ####### Preset view commands #######
-@bot.tree.command(name='preset_camera_view') #Show
+@bot.tree.command(name='show') #Show
 @app_commands.describe(preset= 'Choose a preset view you\'d like')
 @app_commands.choices(preset=[
     app_commands.Choice(name='Whole Table', value=1),
@@ -114,14 +134,13 @@ async def manual_camera_control(interaction: discord.Interaction, cam_control:ap
     app_commands.Choice(name='Battlemap', value=5)
 ])
 async def preset_view_control(interaction: discord.Interaction, preset:app_commands.Choice[int]):
-    responseChannel = bot.get_channel(ChannelResponseId) 
     try:
         obs.call(requests.SetSourceFilterEnabled(sourceName='Insta360 Link', 
                                                  filterName=preset.name, 
                                                  filterEnabled=True))
-        await interaction.response.send_message(f'Ok Dawg, let\'s look at {preset.name}')
+        await interaction.response.send_message(f'Ok Dawg, let\'s look at {preset.name}', ephemeral=True)
     except Exception as e:
-        await interaction.response.send_message(f'Error: {e}')
+        await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
 @bot.command()
 async def sync(ctx):

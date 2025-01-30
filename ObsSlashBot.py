@@ -106,8 +106,8 @@ async def turn_camera_down(interaction: discord.Interaction, iterations: int = 1
 async def zoom_camera_in(interaction: discord.Interaction, iterations: int = 1):
     try:
         for _ in range(iterations):
-            await obs_enable_filter('Zoom-')
-        await interaction.response.send_message(f"Turned up {iterations} times", ephemeral=True)
+            await obs_enable_filter('Zoom+')
+        await interaction.response.send_message(f"Zoomed in {iterations} times", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
@@ -116,8 +116,8 @@ async def zoom_camera_in(interaction: discord.Interaction, iterations: int = 1):
 async def zoom_camera_out(interaction: discord.Interaction, iterations: int = 1):
     try:
         for _ in range(iterations):
-            await obs_enable_filter('Zoom+')
-        await interaction.response.send_message(f"Turned up {iterations} times", ephemeral=True)
+            await obs_enable_filter('Zoom-')
+        await interaction.response.send_message(f"Zoomed out {iterations} times", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
